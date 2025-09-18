@@ -1,0 +1,14 @@
+name: CI from Repo A
+
+on:
+  repository_dispatch:
+    types: [run-ci]
+
+jobs:
+  build:
+    runs-on: macos-latest   # or your self-hosted Mac runners
+    steps:
+      - name: Show caller run ID
+        run: |
+          echo "Triggered by Repo A run ${{ github.event.client_payload.caller_run_id }}"
+          echo "Repo A Run ID: ${{ github.event.client_payload.caller_run_id }}" >> $GITHUB_STEP_SUMMARY
