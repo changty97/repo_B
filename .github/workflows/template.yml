@@ -1,0 +1,32 @@
+name: Call Repo A Template
+
+on:
+  workflow_call:
+    inputs:
+      deploy:
+        type: boolean
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Repo B
+        if: ${{ inputs.deploy == 'true' }}
+        run: |
+          curl -L -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/changty97/repo_B/dispatches \
+            -d '{
+              "event_type":"run-ci",
+              "client_payload":{
+                "ref":"${{ github.ref }}",
+                "caller_run_id":"${{ github.run_id }}"
+              }
+            }'
+
+      - name: Call repo B input is ${{ inputs.deploy }}
+        run: |
+          echo "call repo B again..."
